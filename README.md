@@ -24,6 +24,7 @@ This standard collision avoidance simulation places agents around a ring at anti
 <script>
 (function() {
   // parameter descriptions are given here: http://gamma.cs.unc.edu/RVO2/documentation/2.0/params.html
+  // (timeStep, neighborDist, maxNeighbors, timeHorizon, timeHorizonObst, radius, maxSpeed, velocity)
   var sim = new RVO.Simulator(2, 50, 5, 10, 10, 7, 1, [0, 0])
     , goals = []
     , center = [400, 400]
