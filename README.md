@@ -70,7 +70,7 @@ function reachedGoals(sim, goals) {
 // 给所有小球分配新的速度
 function setPreferredVelocities(sim, goals) {
   for (var i = 0, len = sim.agents.length; i < len; i ++) {
-    // 嗯据当前目标重新获取目标方向向量
+    // 据当前目标重新获取目标方向向量
     var goalVector = RVO.Vector.subtract(goals[i], sim.agents[i].position);
     if (RVO.Vector.absSq(goalVector) > 1) {
       goalVector = RVO.Vector.normalize(goalVector);
