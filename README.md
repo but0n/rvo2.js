@@ -31,26 +31,29 @@ This standard collision avoidance simulation places agents around a ring at anti
     , total = 100
     , timeStep = 13;
 
-  // add 100 agents and specify goals for each
+  // 添加 100 个小球, 每个小球都有不同的目标
+
+  // 这里的数量由 total 定义, 通过数量计算角度 delta 和 position, 围成一圈
   for (var angle = Math.PI / total; angle < Math.PI * 2; angle += Math.PI / (.5 * total)) {
     var point = RVO.Vector.multiply([Math.sin(angle), Math.cos(angle)], radius);
-    sim.addAgent(RVO.Vector.add(center, point));
-    goals.push(RVO.Vector.subtract(center, point));
+    sim.addAgent(RVO.Vector.add(center, point));    // 添加 Agent
+    goals.push(RVO.Vector.subtract(center, point)); // 保存对应的目标
   }
 
   var ivl = setInterval(function() {
-    if (reachedGoals(sim, goals)) {
-      clearInterval(ivl);
+    if (reachedGoals(sim, goals)) { // 如果所有小球都到达目标点
+      clearInterval(ivl);           // 停止循环
     }
-    else {
-      updateVisualization(sim);
-      setPreferredVelocities(sim, goals);
-      sim.doStep();
+    else {                                  // 如果有小球没有到达目标点
+      updateVisualization(sim);             // 刷新屏幕
+      setPreferredVelocities(sim, goals);   // 给所有小球分配新的速度
+      sim.doStep(); //走一步
     }
   }, timeStep);
 })()
 
 // checks to see if all agents have reached their goals
+// 检查是不是所有小球都到达了目标
 function reachedGoals(sim, goals) {
   for (var i = 0, len = sim.agents.length; i < len; i ++) {
     if (RVO.Vector.absSq(RVO.Vector.subtract(sim.agents[i].position, goals[i])) > 1) {
@@ -61,17 +64,20 @@ function reachedGoals(sim, goals) {
 }
 
 // assigns new velocities to all the agents
+// 给所有小球分配新的速度
 function setPreferredVelocities(sim, goals) {
   for (var i = 0, len = sim.agents.length; i < len; i ++) {
+    // 嗯据当前目标重新获取目标方向向量
     var goalVector = RVO.Vector.subtract(goals[i], sim.agents[i].position);
     if (RVO.Vector.absSq(goalVector) > 1) {
       goalVector = RVO.Vector.normalize(goalVector);
     }
-    sim.agents[i].prefVelocity = goalVector;
+    sim.agents[i].prefVelocity = goalVector; // 更新
   }
 }
 
 // draws the agents
+// Canvas 绘制
 function updateVisualization(sim) {
   var ctx = document.getElementById('rvo-test').getContext('2d');
   ctx.clearRect(0, 0, 800, 800);
