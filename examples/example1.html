@@ -27,7 +27,7 @@
     // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
     // http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
 
-    // requestAnimationFrame polyfill by Erik Möller
+    // requestAnimationFrame polyfill by Erik Mï¿½ller
     // fixes from Paul Irish and Tino Zijdel
 
     (function() {
@@ -62,12 +62,12 @@
       , altgoals = []
       , colors = []
       , obstacles = []
-      , total = 100
+      , total = 50
       , redrawIvl = 1000 / 60
-      , speed = .6
+      , speed = 2.6
       , newSpeed = speed
-      , sim = new RVO.Simulator(1, 50, 7, 10, 10, 7, speed, [0, 0]);
-
+      , sim = new RVO.Simulator(1, 50, 7, 10, 10, 27, speed, [0, 0]);
+    var c = .3;
     for (var angle = Math.PI / total; angle < Math.PI * 2; angle += Math.PI / (.5 * total)) {
       var point = RVO.Vector.multiply([Math.sin(angle), Math.cos(angle)], canvasSize * .48)
         , rgb = HSVtoRGB(Math.round(360 * (angle / (Math.PI * 2))), 1, 255);
@@ -134,7 +134,7 @@
       for (var i = 0, len = sim.agents.length; i < len; i ++) {
         var agent = sim.agents[i];
         ctx.beginPath();
-        ctx.arc(agent.position[0], agent.position[1], agent.radius * .9, 0, Math.PI * 2);
+        ctx.arc(agent.position[0], agent.position[1], agent.radius * c, 0, Math.PI * 2);
         ctx.closePath();
         ctx.fillStyle = colors[i];
         ctx.fill();
