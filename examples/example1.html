@@ -21,7 +21,7 @@
   </head>
   <body>
     <label>Speed: <input type="range" value="6" max="15" min="1" step="1" id="speed" /></label>
-    <canvas height="800" width="800" id="rvo-test"></canvas>
+    <canvas height="800" width="800" id="rvo-test" onmousedown="pick(event)"></canvas>
     <script type="text/javascript" src="http://paulwe.github.com/rvo2.js/lib/rvo2.min.js"></script>
     <script>
     // http://paulirish.com/2011/requestanimationframe-for-smart-animating/
@@ -62,20 +62,33 @@
       , altgoals = []
       , colors = []
       , obstacles = []
-      , total = 10
+      , total = 40
       , redrawIvl = 1000 / 60
       , speed = 2.6
       , newSpeed = speed
-      , sim = new RVO.Simulator(1, 50, 70, 10, 10, 7, speed, [0, 0]);
+      , sim = new RVO.Simulator(1, 90, 40, 8, 8, 7, speed, [0, 0]);
     var c = .9;
     for (var angle = Math.PI / total; angle < Math.PI * 2; angle += Math.PI / (.5 * total)) {
-      var point = RVO.Vector.multiply([Math.sin(angle), Math.cos(angle)], canvasSize * .48)
-        , rgb = HSVtoRGB(Math.round(360 * (angle / (Math.PI * 2))), 1, 255);
+        if(angle == 0) {
 
-      sim.addAgent(RVO.Vector.add(center, point));
-      goals.push(RVO.Vector.subtract(center, point));
-      altgoals.push(RVO.Vector.add(center, point));
-      colors.push('rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', .75)');
+          var point = RVO.Vector.multiply([Math.sin(angle), Math.cos(angle)], canvasSize * .48)
+            , rgb = HSVtoRGB(Math.round(360 * (angle / (Math.PI * 2))), 1, 255);
+
+          sim.addAgent(RVO.Vector.add(center, point));
+          // goals.push(RVO.Vector.subtract(center, point));
+          goals.push(RVO.Vector.add(center, point));
+          altgoals.push(RVO.Vector.add(center, point));
+          colors.push('rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', .75)');
+      } else {
+
+          var point = RVO.Vector.multiply([Math.sin(angle), Math.cos(angle)], canvasSize * .13)
+            , rgb = HSVtoRGB(Math.round(360 * (angle / (Math.PI * 2))), 1, 255);
+
+          sim.addAgent(RVO.Vector.add(center, point));
+          // goals.push(RVO.Vector.subtract(center, point));
+          goals.push(RVO.Vector.add(center, point));
+          altgoals.push(RVO.Vector.add(center, point));
+          colors.push('rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', .75)');      }
     }
 
     window.addEventListener('load', function() {
@@ -107,9 +120,9 @@
     function updateGoals() {
       for (var i = 0, len = sim.agents.length; i < len; i ++) {
         if (RVO.Vector.absSq(RVO.Vector.subtract(sim.agents[i].position, goals[i])) < 1) {
-          var temp = goals[i];
-          goals[i] = altgoals[i];
-          altgoals[i] = temp;
+          // var temp = goals[i];
+          // goals[i] = altgoals[i];
+          // altgoals[i] = temp;
         }
       }
     }
@@ -139,6 +152,12 @@
         ctx.fillStyle = colors[i];
         ctx.fill();
       }
+    }
+    let pick = (e) => {
+        console.log(e.clientX + ',' + e.clientY);
+        console.log(sim.agents[0].position);
+        goals[0] = [e.clientX-8, e.clientY-38]; // offset
+
     }
 
     function HSVtoRGB(h, s, v) {
@@ -191,16 +210,6 @@
         b: Math.round(b)
       }
     }
-    </script>
-    <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-309942-36']);
-    _gaq.push(['_trackPageview']);
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
     </script>
   </body>
 </html>
