@@ -62,15 +62,15 @@
       , altgoals = []
       , colors = []
       , obstacles = []
-      , total = 40
+      , total = 20
       , redrawIvl = 1000 / 60
-      , speed = 2.6
+      , speed = 1.2
       , newSpeed = speed
-      , sim = new RVO.Simulator(1, 90, 40, 8, 8, 7, speed, [0, 0]);
+      , sim = new RVO.Simulator(1, 90, 40, 4, 4, 17, speed, [0, 0]);
     var c = .9;
     for (var angle = Math.PI / total; angle < Math.PI * 2; angle += Math.PI / (.5 * total)) {
         if(angle == 0) {
-
+            // Player
           var point = RVO.Vector.multiply([Math.sin(angle), Math.cos(angle)], canvasSize * .48)
             , rgb = HSVtoRGB(Math.round(360 * (angle / (Math.PI * 2))), 1, 255);
 
@@ -80,16 +80,19 @@
           altgoals.push(RVO.Vector.add(center, point));
           colors.push('rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', .75)');
       } else {
-
+          // Boss
           var point = RVO.Vector.multiply([Math.sin(angle), Math.cos(angle)], canvasSize * .13)
             , rgb = HSVtoRGB(Math.round(360 * (angle / (Math.PI * 2))), 1, 255);
 
           sim.addAgent(RVO.Vector.add(center, point));
           // goals.push(RVO.Vector.subtract(center, point));
-          goals.push(RVO.Vector.add(center, point));
+          goals.push(sim.agents[0].position);
           altgoals.push(RVO.Vector.add(center, point));
           colors.push('rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ', .75)');      }
     }
+    // Player
+    sim.agents[0].radius = 7;
+    sim.agents[0].maxSpeed = 3.6;
 
     window.addEventListener('load', function() {
       document.getElementById('speed').addEventListener('change', function(e) {
@@ -109,7 +112,8 @@
         }
       }
 
-      updateGoals();
+      let status = reachedGoals(sim, goals);
+      // console.log(status)
       setPreferredVelocities();
       sim.doStep();
       updateVisualization();
@@ -117,14 +121,22 @@
     }
     requestAnimationFrame(redraw, canvas);
 
-    function updateGoals() {
-      for (var i = 0, len = sim.agents.length; i < len; i ++) {
-        if (RVO.Vector.absSq(RVO.Vector.subtract(sim.agents[i].position, goals[i])) < 1) {
-          // var temp = goals[i];
-          // goals[i] = altgoals[i];
-          // altgoals[i] = temp;
+    function reachedGoals(sim, goals) {
+        // Boss
+        for (var i = 1, len = sim.agents.length; i < len; i ++) {
+            // console.log(RVO.Vector.absSq(RVO.Vector.subtract(sim.agents[i].position, goals[i]))
+            let range = RVO.Vector.absSq(RVO.Vector.subtract(sim.agents[i].position, sim.agents[0].position));
+            if (range < 8800 || range > 49000) {
+                // console.log(i + ' in position');
+                goals[i] = sim.agents[i].position;  // Stop
+            } else {
+                goals[i] = sim.agents[0].position;
+
+                // console.log(i + ' not in position');
+
+            }
         }
-      }
+        return true;
     }
 
     function setPreferredVelocities() {
