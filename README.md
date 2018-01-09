@@ -38,6 +38,7 @@ This standard collision avoidance simulation places agents around a ring at anti
   for (var angle = Math.PI / total; angle < Math.PI * 2; angle += Math.PI / (.5 * total)) {
     var point = RVO.Vector.multiply([Math.sin(angle), Math.cos(angle)], radius);
     // (position, neighborDist, maxNeighbors, timeHorizon, timeHorizonObst, radius, maxSpeed, velocity)
+    // 位置, 相邻距离(distance), 最大相邻数量, 时间界限, ?, 碰撞半径, 最大速度, 初始速度
     // 只传递了 position 其它用初始化时的值
     sim.addAgent(RVO.Vector.add(center, point));    // 添加 Agent
     goals.push(RVO.Vector.subtract(center, point)); // 保存对应的目标
