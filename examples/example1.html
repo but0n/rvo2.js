@@ -62,12 +62,12 @@
       , altgoals = []
       , colors = []
       , obstacles = []
-      , total = 50
+      , total = 10
       , redrawIvl = 1000 / 60
       , speed = 2.6
       , newSpeed = speed
-      , sim = new RVO.Simulator(1, 50, 7, 10, 10, 27, speed, [0, 0]);
-    var c = .3;
+      , sim = new RVO.Simulator(1, 50, 70, 10, 10, 7, speed, [0, 0]);
+    var c = .9;
     for (var angle = Math.PI / total; angle < Math.PI * 2; angle += Math.PI / (.5 * total)) {
       var point = RVO.Vector.multiply([Math.sin(angle), Math.cos(angle)], canvasSize * .48)
         , rgb = HSVtoRGB(Math.round(360 * (angle / (Math.PI * 2))), 1, 255);
